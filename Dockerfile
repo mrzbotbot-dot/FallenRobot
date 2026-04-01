@@ -1,8 +1,22 @@
-FROM python:latest
+FROM python:3.10-slim-buster
 
-RUN apt-get update -y && apt-get upgrade -y
+RUN apt-get update && apt-get install -y \
+    git \
+    imagemagick \
+    libmagickcore-dev \
+    libmagickwand-dev \
+    python3-pip \
+    ffmpeg \
+    --no-install-recommends && \
+    rm -rf /var/lib/apt/lists/*
 
-RUN pip3 install -U pip setuptools
-RUN pip3 install -U -r requirements.txt
+WORKDIR /app
 
-CMD ["python3","-m","FallenRobot"]
+COPY requirements.txt .
+
+RUN pip3 install --no-cache-dir -U pip setuptools
+RUN pip3 install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+CMD ["python3", "-m", "FallenRobot"]
